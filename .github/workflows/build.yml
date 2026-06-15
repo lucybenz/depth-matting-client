@@ -1,0 +1,32 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore DepthMattingClient/DepthMattingClient.csproj
+
+      - name: Build
+        run: dotnet build DepthMattingClient/DepthMattingClient.csproj -c Release --no-restore
+
+      - name: Publish
+        run: dotnet publish DepthMattingClient/DepthMattingClient.csproj -c Release -r win-x64 --self-contained false -o artifacts/depth-matting-client
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: depth-matting-client-win-x64
+          path: artifacts/depth-matting-client

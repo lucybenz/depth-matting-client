@@ -745,6 +745,7 @@ public partial class Form1 : Form
     private async Task SaveCurrentFrameAsync()
     {
         _saveButton.Enabled = false;
+        var clock = Stopwatch.StartNew();
         SetStatus("Preparing current RGB-D frame for 4K PNG save...");
         try
         {
@@ -774,6 +775,7 @@ public partial class Form1 : Form
             var holeFill = (int)_depthHoleFillInput.Value;
             var bgMode = _backgroundMode.SelectedIndex;
             var useGpu = _useGpuBox.Checked;
+            var providerName = useRvm ? (useGpu ? "DirectML" : "CPU") : "No RVM";
 
             var result = await Task.Run(() =>
             {
@@ -814,8 +816,9 @@ public partial class Form1 : Form
 
             previewOutput?.Dispose();
 
+            clock.Stop();
             AppLog.WriteText($"Saved matting result: {result}");
-            SetStatus($"Saved matting result: {result}");
+            SetStatus($"Saved matting result: {result} | Provider {providerName} | {clock.Elapsed.TotalSeconds:F1}s");
             OpenOutputDirectory(result);
         }
         catch (Exception ex)
