@@ -12,6 +12,7 @@
 - 支持开启或关闭 RVM，仅查看深度抠像效果
 - 支持背景图片和背景视频
 - 保存当前抠像合成 PNG、RGB PNG 和深度预览 PNG
+- 保存当前帧时会按界面上的 DirectML GPU 开关选择 GPU 或 CPU 推理
 
 ## 环境要求
 
@@ -59,6 +60,10 @@ dotnet run --project .\DepthMattingClient
 5. 开启 RVM 时，程序会融合视觉抠像和深度约束。
 6. 关闭 RVM 时，可以单独观察深度切片效果，便于判断深度参数是否合适。
 7. 点击保存当前帧，输出当前抠像合成结果。
+
+## GPU 说明
+
+界面中的 `DirectML GPU` 控制 RVM 推理 provider。开启后，实时预览和保存当前帧都会优先使用 DirectML。DirectML 依赖 Windows 显卡驱动和 ONNX Runtime DirectML，如果加载失败，请先确认显卡驱动可用，再尝试关闭该开关用 CPU 验证流程。
 
 ## 3 米拍摄建议
 

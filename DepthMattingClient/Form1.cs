@@ -555,7 +555,8 @@ public partial class Form1 : Form
         int center,
         int thickness,
         int holeFill,
-        int bgMode)
+        int bgMode,
+        bool useGpu)
     {
         using var bg = PrepareBackgroundForSave(colorBgr.Width, colorBgr.Height, bgMode);
         using var depthMask = DepthForegroundMask(depth16, colorBgr.Width, colorBgr.Height, center, thickness);
@@ -569,7 +570,7 @@ public partial class Form1 : Form
         Mat result;
         if (useRvm && !string.IsNullOrWhiteSpace(modelPath) && File.Exists(modelPath))
         {
-            using var saveModel = new RvmOnnxMatting(modelPath, useGpu: false);
+            using var saveModel = new RvmOnnxMatting(modelPath, useGpu);
             result = saveModel.Matte(colorBgr, downsample, bg);
             if (!useDepth)
             {
@@ -772,6 +773,7 @@ public partial class Form1 : Form
             var thickness = (int)_depthThicknessInput.Value;
             var holeFill = (int)_depthHoleFillInput.Value;
             var bgMode = _backgroundMode.SelectedIndex;
+            var useGpu = _useGpuBox.Checked;
 
             var result = await Task.Run(() =>
             {
@@ -781,7 +783,7 @@ public partial class Form1 : Form
                     Mat output;
                     try
                     {
-                        output = ProcessMattingForSave(color, depth, useRvm, useDepth, showMask, downsample, modelPath, center, thickness, holeFill, bgMode);
+                        output = ProcessMattingForSave(color, depth, useRvm, useDepth, showMask, downsample, modelPath, center, thickness, holeFill, bgMode, useGpu);
                     }
                     catch (Exception ex)
                     {
